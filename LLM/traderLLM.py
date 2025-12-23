@@ -1,5 +1,7 @@
+from BaseLLM import base_LLM
 
-class consulter_LLM(base_LLM):
+# 
+class traderLLm(base_LLM):
     def __init__(self):
         super().__init__()
         self.allowed_tools = ["get_headlines"]
@@ -14,6 +16,16 @@ class consulter_LLM(base_LLM):
             You read the news provided to you and respond with clear, concise recommendations such as 'buy', 'sell', or 'hold' along with reasoning.
 
             Always output in JSON with fields: {{"action": "buy|sell|hold", "asset": "ticker or name", "confidence": 0-100, "reason": "short explanation"}}.
-
-            Here's headlines of today: {get_headlines()}
         """
+
+    def work(self, data = None):
+        prompt = self.prompt
+        if data:
+            print("Data was used by trader!")
+            prompt += f"Here's some data about the markets to help you make better suggestions {data}"
+
+        return self.getResponse(prompt=prompt)
+
+if __name__ == "__main__":
+    trader = traderLLm()
+    print(trader.work())

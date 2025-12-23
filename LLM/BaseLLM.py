@@ -1,11 +1,8 @@
 """Created on 09-14-2025 16:36:06 @author: denizyalimyilmaz"""
 
-import logging 
-
-# from fatwoman_log_setup import script_end_log
-# script_end_log()
+import os
+from dotenv import load_dotenv
 from openai import OpenAI
-
 
 # Abstract Parent Class
 class base_LLM:
@@ -14,17 +11,22 @@ class base_LLM:
         self.context = ""
         self.model = "gpt-5"  # gpt-4o, gpt-4o-mini, gpt-4-turbo
         self.allowed_tools = []
+        load_dotenv()
 
     def work(self):
         pass
 
-    def getResponse(self, justMessage = True):
-        client = OpenAI(api_key=OPENAI_API_KEY)
+    def getResponse(self, prompt, justMessage = True):
+        """# Now forced to input prompt
+        if not prompt: # if prompt isn't given default to class default
+            prompt = self.prompt"""
+
+        client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
         response = client.chat.completions.create(
             model=self.model,
             messages=[
                 {"role": "system", "content": self.context},
-                {"role": "user", "content": self.prompt},
+                {"role": "user", "content": prompt},
             ],
         )
         if(justMessage):
@@ -111,6 +113,5 @@ class headline_classifier_LLM(base_LLM):
 
 if __name__ == "__main__":
     # print(get_headlines())
-    
-    consulter_LLM = consulter_LLM()
-    print(consulter_LLM.getResponse(justMessage=False))
+    llm = base_LLM()
+    print(llm.getResponse("hey gpt what's 5x5 ?"))
